@@ -48,6 +48,15 @@ const Unlock unlocks[UNLOCK_COUNT] = {
      sizeof(edat_ranger)},
     {"Black Ops Variation", "blackops_unlock.edat", edat_blackops,
      sizeof(edat_blackops)}};
+
+/* Filesystem policy is separate from the menu: adding a selection must not
+ * silently expand backup/restore ownership. Map-pack markers (r2x_unlock.*),
+ * archives (including data/patch_02.psarc), and their temporary files stay
+ * outside this cosmetic-only allowlist, even with an older backup. */
+static const char *const cosmetic_files[] = {
+    "wraith_unlock.dat", "malikov_unlock.dat", "grim_unlock.dat",
+    "rachel_unlock.edat", "fsoldier_unlock.edat", "ravager_unlock.edat",
+    "cloven_unlock.edat", "ranger_unlock.edat", "blackops_unlock.edat"};
 typedef struct {
   unsigned present, size;
   unsigned char hash[32];
@@ -77,6 +86,23 @@ int manager_pending(void) { return pending; }
 static int path(char *out, const char *root, const char *name) {
   int n = snprintf(out, PATH_CAP, "%s/%s", root, name);
   return n > 0 && n < PATH_CAP ? 0 : error("A filesystem path is too long.");
+}
+static int cosmetic_file_allowed(unsigned i) {
+  unsigned j;
+  if (i >= UNLOCK_COUNT)
+    return 0;
+  for (j = 0; j < sizeof(cosmetic_files) / sizeof(cosmetic_files[0]); j++)
+    if (!strcmp(unlocks[i].file, cosmetic_files[j]))
+      return 1;
+  return 0;
+}
+static int cosmetic_path(char *out, unsigned i, int staging) {
+  char name[96];
+  if (!cosmetic_file_allowed(i))
+    return error("File is outside cosmetic unlock management.");
+  snprintf(name, sizeof(name), "%s%s", unlocks[i].file,
+           staging ? ".r2tk-stage" : "");
+  return path(out, game, name);
 }
 static int regular(const char *p, struct stat *st) {
 #ifdef _WIN32
@@ -275,6 +301,8 @@ static int ensure_backup_dirs(void) {
 }
 static int original_path(char *out, unsigned i) {
   char name[80];
+  if (!cosmetic_file_allowed(i))
+    return error("File is outside cosmetic unlock management.");
   snprintf(name, sizeof(name), "%s.original", unlocks[i].file);
   return path(out, backup, name);
 }
@@ -353,8 +381,11 @@ int manager_init(const char *game_directory, const char *backup_directory) {
     return error("Path too long.");
   snprintf(game, sizeof(game), "%s", game_directory);
   snprintf(backup, sizeof(backup), "%s", backup_directory);
-  for (i = 0; i < UNLOCK_COUNT; i++)
+  for (i = 0; i < UNLOCK_COUNT; i++) {
+    if (!cosmetic_file_allowed(i))
+      return error("File is outside cosmetic unlock management.");
     sha256(unlocks[i].data, unlocks[i].size, managed_hash[i]);
+  }
   if (game_valid())
     return -1;
   supported = 1;
@@ -371,7 +402,7 @@ int manager_scan(unsigned *present, unsigned *original, unsigned *managed) {
   Record r;
   *present = *original = *managed = 0;
   for (i = 0; i < UNLOCK_COUNT; i++) {
-    if (path(p, game, unlocks[i].file) || record_file(p, &r, FILE_LIMIT))
+    if (cosmetic_path(p, i, 0) || record_file(p, &r, FILE_LIMIT))
       return -1;
     if (r.present)
       *present |= 1u << i;
@@ -406,7 +437,7 @@ int manager_backup(void) {
     Record r;
     unsigned char *data;
     unsigned size;
-    if (path(p, game, unlocks[i].file) || record_file(p, &r, FILE_LIMIT))
+    if (cosmetic_path(p, i, 0) || record_file(p, &r, FILE_LIMIT))
       return -1;
     unsigned char *e = manifest + 48 + i * 37;
     e[0] = r.present;
@@ -452,14 +483,13 @@ static int preflight(void) {
   if (!supported || game_valid() || load_baseline() || !baseline)
     return error("A valid original backup is required.");
   for (i = 0; i < UNLOCK_COUNT; i++) {
-    if (path(p, game, unlocks[i].file) || record_file(p, &r, FILE_LIMIT))
+    if (cosmetic_path(p, i, 0) || record_file(p, &r, FILE_LIMIT))
       return -1;
     if (r.present && !same(&r, &originals[i]) &&
         !(r.size == unlocks[i].size && !memcmp(r.hash, managed_hash[i], 32)))
       return error("Conflict: %s changed outside R2TK.", unlocks[i].name);
-    char stage[PATH_CAP], name[96];
-    snprintf(name, sizeof(name), "%s.r2tk-stage", unlocks[i].file);
-    if (path(stage, game, name) || record_file(stage, &r, FILE_LIMIT))
+    char stage[PATH_CAP];
+    if (cosmetic_path(stage, i, 1) || record_file(stage, &r, FILE_LIMIT))
       return -1;
     /* A durable pending record owns this exact staging filename. An interrupted
      * write can leave a partial file, which recovery may safely discard. */
@@ -487,12 +517,12 @@ static int journal_begin(unsigned mask) {
   return 0;
 }
 static int install_record(unsigned i, int selected) {
-  char dest[PATH_CAP], stage[PATH_CAP], name[96];
+  char dest[PATH_CAP], stage[PATH_CAP];
   Record r, want;
   unsigned char *allocated = NULL;
   const unsigned char *data = NULL;
   unsigned size = 0;
-  if (path(dest, game, unlocks[i].file))
+  if (cosmetic_path(dest, i, 0))
     return -1;
   if (originals[i].present) {
     char p[PATH_CAP];
@@ -519,8 +549,7 @@ static int install_record(unsigned i, int selected) {
     free(allocated);
     return error("Unlock file changed during the operation.");
   }
-  snprintf(name, sizeof(name), "%s.r2tk-stage", unlocks[i].file);
-  if (path(stage, game, name)) {
+  if (cosmetic_path(stage, i, 1)) {
     free(allocated);
     return -1;
   }

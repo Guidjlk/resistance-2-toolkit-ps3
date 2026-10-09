@@ -2,6 +2,11 @@
 
 Native PS3 application history. Windows toolkit changes are tracked separately. These versions retain the same application identity and automatic-backup format.
 
+## 0.1.10
+
+- Enforced a separate cosmetic-only file allowlist for backup, apply, restore and interrupted-operation recovery.
+- Preserved Aftermath map-pack unlock markers and archives, including DLC installed after the first automatic backup.
+
 ## 0.1.9
 
 - Moved unlock status labels into a right-aligned column beside each name, inside the selection highlight.

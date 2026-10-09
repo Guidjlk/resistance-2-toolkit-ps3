@@ -17,7 +17,9 @@ typedef struct {
 } Unlock;
 extern const Unlock unlocks[UNLOCK_COUNT];
 /* This core only touches the nine allowlisted unlock filenames, its own
- * backup records, and matching temporary files. EBOOT and saves are read-only.
+ * backup records, and matching temporary files. Map-pack markers and archives
+ * are never managed, including during restore or interrupted recovery.
+ * EBOOT and saves are read-only.
  */
 API int manager_init(const char *game_directory, const char *backup_directory);
 API int manager_backup(void);

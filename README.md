@@ -8,7 +8,7 @@ Requires a PS3 with custom firmware (CFW), **BCUS98120**, update **1.60**, and i
 
 ## Download
 
-Get **Resistance-2-Tool-Kit-0.1.9.pkg** from the [latest release](https://github.com/Guidjlk/resistance-2-toolkit-ps3/releases/latest). Install it on your CFW PS3 or in RPCS3 using the instructions below. Source code, credits, licenses and the changelog accompany the release.
+Get the toolkit PKG from the [latest release](https://github.com/Guidjlk/resistance-2-toolkit-ps3/releases/latest). Install it on your CFW PS3 or in RPCS3 using the instructions below. Source code, credits, licenses and the changelog accompany the release.
 
 ## Features
 
@@ -25,7 +25,7 @@ The six additional character skins use EDAT unlock files. Wraith, Malikov and Gr
 ## Install and use on PS3
 
 1. Install Resistance 2's official 1.60 update and use its original installed executable. Close the game.
-2. Copy `Resistance-2-Tool-Kit-0.1.9.pkg` to a FAT32 USB drive. Install it using your CFW's package manager, then launch **Resistance 2 Tool Kit** from the XMB. Keep CFW syscalls enabled while launching homebrew. If the application is already installed, install the newer PKG over it; its separate unlock backup is retained.
+2. Copy the toolkit `.pkg` to a FAT32 USB drive. Install it using your CFW's package manager, then launch **Resistance 2 Tool Kit** from the XMB. Keep CFW syscalls enabled while launching homebrew. If the application is already installed, install the newer PKG over it; its separate unlock backup is retained.
 3. Select the desired cosmetics and choose **Apply Selection**. Confirm with Cross and wait for the completion message. The application automatically records which of the nine unlock files already existed and preserves their contents before the first change.
 4. Exit the application, launch Resistance 2 and inspect its multiplayer skins and Wraith appearance.
 
@@ -47,9 +47,11 @@ Backup and restore cover only the nine unlock marker files, including whether ea
 
 ## Existing DLC
 
-Unlock files present before the first automatic backup are preserved, whether their options are checked or unchecked. **Revert to Original** keeps those files and removes only toolkit additions. Account activation and licenses are not edited. The Aftermath map pack, its entitlement file and map assets are outside this application's scope.
+Unlock files present before the first automatic backup are preserved, whether their options are checked or unchecked. **Revert to Original** keeps those files and removes only toolkit additions. Account activation and licenses are not edited.
 
-The restore point is the state before the first use, not a continuously updated record of installed DLC. Install your existing DLC before using the application. If you install or reinstall DLC afterwards, avoid reverting against the old backup until that changed state has been reviewed; new entitlement files can cause a conflict, and identical empty DAT markers cannot reveal who installed them.
+The Aftermath map pack is excluded from all cosmetic backup, apply, restore and recovery operations. Its `r2x_unlock.dat`, `r2x_unlock.edat` and `data/patch_02.psarc` files are left unchanged, even if installed or replaced after the first automatic backup. Reverting cosmetics does not undo the separately installed map-pack fix.
+
+For the nine managed cosmetic unlocks, the restore point is the state before the first use, not a continuously updated record of installed DLC. Install your existing cosmetic DLC before using the application. If you install or reinstall those cosmetics afterwards, avoid reverting against the old backup until that changed state has been reviewed; new cosmetic entitlement files can cause a conflict, and identical empty DAT markers cannot reveal who installed them.
 
 ## RPCS3
 

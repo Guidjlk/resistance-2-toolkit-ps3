@@ -191,8 +191,8 @@ static void draw(void) {
   rectangle(36, 36, 1208, 100, 0xff17273a);
   text(60, 58, 4, 0xffe8eff4, "RESISTANCE 2 TOOL KIT");
   text(62, 104, 2, 0xff9daebd,
-       likely_rpcs3 ? "RPCS3  /  BCUS98120  /  UPDATE 1.60  /  0.1.9"
-                    : "PS3 CFW  /  BCUS98120  /  UPDATE 1.60  /  0.1.9");
+        likely_rpcs3 ? "RPCS3  /  BCUS98120  /  UPDATE 1.60  /  0.1.10"
+                    : "PS3 CFW  /  BCUS98120  /  UPDATE 1.60  /  0.1.10");
   rectangle(36, 150, 540, 498, 0xff132031);
   rectangle(594, 150, 650, 498, 0xff132031);
   if (credits) {
