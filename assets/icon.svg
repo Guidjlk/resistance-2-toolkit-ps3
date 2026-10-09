@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="R2TK">
+<title>Resistance 2 Tool Kit</title>
+<rect x="7.5" y="7.5" width="241" height="241" rx="40.5" fill="none" stroke="#e8ac60" stroke-width="7" /><line x1="48" y1="135.5" x2="208" y2="135.5" stroke="#354354" stroke-width="3" />
+<path d="M48 40 L94 40 L108 54 L108 78 L95 91 L112 120 L89 120 L72 93 L67 93 L67 120 L48 120 Z M67 58 L86 58 L90 62 L90 72 L86 76 L67 76 Z" fill="#f3eee5" fill-rule="evenodd" />
+<polygon points="144,54 158,40 190,40 204,54 204,75 190,89 165,102 204,102 204,120 144,120 144,93 183,71 185,67 185,61 181,57 166,57 162,61 162,65 144,65" fill="#f3eee5" />
+<polygon points="46,148 110,148 110,166 88,166 88,220 68,220 68,166 46,166" fill="#e8ac60" />
+<polygon points="142,148 162,148 162,175 182,148 206,148 177,183 208,220 183,220 162,193 162,220 142,220" fill="#e8ac60" />
+</svg>
